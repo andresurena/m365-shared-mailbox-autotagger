@@ -4,12 +4,20 @@ Crazy enough, you can set up a Shared Mailbox in Microsoft 365... but they won't
 you who replied to an email unless you use "Send on Behalf" — and even then, nothing
 tags it automatically. Everyone just has to remember, or open every message and check.
 
-This isn't just us. It's a recurring complaint:
+This isn't just us. It's a recurring complaint — same question, asked independently,
+over and over, for more than a decade:
 
-- [r/Office365 — "Shared inbox category tags & notifications"](https://www.reddit.com/r/Office365/comments/1afk2vq/shared_inbox_category_tags_notifications/)
+- 2013 — [r/Office365 — "How to track which users have replied to mail sent to a shared mailbox?"](https://www.reddit.com/r/Office365/comments/2v1ww5/how_to_track_which_users_have_replied_to_mail/)
+- 2016 — [r/Office365 — "Can we tell which member of shared inbox replied to a message?"](https://www.reddit.com/r/Office365/comments/53pfxe/can_we_tell_which_member_of_shared_inbox_replied/)
+- 2018 — [r/vba — "Identifying the actual sender in shared Outlook mailbox"](https://www.reddit.com/r/vba/comments/9rs1yp/identifying_the_actual_sender_in_shared_outlook/) (someone resorted to writing custom VBA just to count replies per person)
+- 2023 — [r/Office365 — "Shared inbox category tags & notifications"](https://www.reddit.com/r/Office365/comments/1afk2vq/shared_inbox_category_tags_notifications/)
+- 2023 — [r/Outlook — "Is there a way to tell if someone in a shared inbox has taken care of an email"](https://www.reddit.com/r/Outlook/comments/19aqi4r/is_there_a_way_to_tell_if_someone_in_a_shared/)
+- 2023 — [r/Office365 — "Is there a way to see who opened a specific email in a shared mailbox?"](https://www.reddit.com/r/Office365/comments/15mpfu6/is_there_a_way_to_see_who_opened_a_specific_email/)
 - [Microsoft Q&A — "Identifying who sent an email from a shared mailbox"](https://learn.microsoft.com/en-us/answers/questions/4913451/identifying-who-sent-an-email-from-a-shared-mailbo)
 
-The accepted "solution" on the Microsoft Q&A thread is: turn on mailbox auditing, then
+Same core question, three different subreddits, over ten years apart, and the answer
+never changed: it isn't natively possible. The accepted "solution" on the Microsoft
+Q&A thread is: turn on mailbox auditing, then
 run a PowerShell command against the **audit log** any time you want to know who sent
 something — and it only works for mail sent *after* you turned auditing on, never
 retroactively. That's not "who replied to this," that's "go grep a log file and hope."
