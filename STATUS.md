@@ -8,7 +8,7 @@ replies via the `sender`/`from` distinction, tags the reply, and finds/tags the
 original message via `conversationId`. A daily Cron Trigger renews the Graph
 subscription indefinitely with no manual upkeep. Two commits, both 2026-07-27: the
 initial build, then an expansion of the README's supporting evidence (six Reddit
-threads spanning 2013–2023, cited to show this is a long-standing, unsolved Microsoft
+threads spanning 2015–2024, cited to show this is a long-standing, unsolved Microsoft
 365 gap, not a one-off complaint).
 
 Known from context (not from the repo's own files): a real, non-genericized deployment
