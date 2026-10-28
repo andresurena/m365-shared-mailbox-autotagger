@@ -33,8 +33,8 @@ export default {
     // Microsoft Graph validates a new subscription by calling your URL with
     // ?validationToken=... and expects it echoed back as plain text within seconds.
     const validationToken = url.searchParams.get('validationToken');
-    if (validationToken !== null) {
-      return new Response(validationToken, { status: 200, headers: { 'Content-Type': 'text/plain' } });
+    if (validationToken !== null && url.pathname === '/notifications' && request.method === 'POST') {
+      return new Response(validationToken, { status: 200, headers: { 'Content-Type': 'text/plain', 'X-Content-Type-Options': 'nosniff' } });
     }
 
     if (url.pathname === '/notifications' && request.method === 'POST') {
@@ -109,6 +109,11 @@ async function graphFetch(path, token, options) {
 }
 
 async function processNotifications(notifications, env) {
+  // Only notifications carrying our shared secret count, checked BEFORE asking
+  // Microsoft for a token: spoofed or empty calls to the public webhook cost
+  // nothing, and with no GRAPH_CLIENT_STATE set nothing is processed at all.
+  const ours = env.GRAPH_CLIENT_STATE ? notifications.filter((n) => n && n.clientState === env.GRAPH_CLIENT_STATE) : [];
+  if (!ours.length) return;
   let token;
   try {
     token = await getAccessToken(env);
@@ -116,7 +121,7 @@ async function processNotifications(notifications, env) {
     console.error('Failed to get access token', err.message);
     return;
   }
-  for (const n of notifications) {
+  for (const n of ours) {
     try {
       // Reject anything that doesn't carry the shared secret we set when creating
       // the subscription - stops spoofed calls to this endpoint from doing anything.
@@ -136,7 +141,7 @@ async function processNotifications(notifications, env) {
 async function categorizeMessageAndThread(messageId, token, env) {
   const mailbox = env.MAILBOX;
   const msgResp = await graphFetch(
-    '/users/' + encodeURIComponent(mailbox) + '/messages/' + messageId + '?$select=id,sender,from,conversationId,categories',
+    '/users/' + encodeURIComponent(mailbox) + '/messages/' + encodeURIComponent(messageId) + '?$select=id,sender,from,conversationId,categories',
     token
   );
   if (!msgResp.ok) {
@@ -200,7 +205,7 @@ async function categorizeMessageAndThread(messageId, token, env) {
 async function addCategory(mailbox, messageId, existingCategories, category, token) {
   if (existingCategories.includes(category)) return;
   const updated = existingCategories.concat([category]);
-  const resp = await graphFetch('/users/' + encodeURIComponent(mailbox) + '/messages/' + messageId, token, {
+  const resp = await graphFetch('/users/' + encodeURIComponent(mailbox) + '/messages/' + encodeURIComponent(messageId), token, {
     method: 'PATCH',
     body: JSON.stringify({ categories: updated }),
   });
